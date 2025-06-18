@@ -1,9 +1,9 @@
 {
   "name": "module-3",
   "version": "1.0.0",
-  "main": "dist/app/server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "nodemon ./dist/app/server.js",
+    "dev": "nodemon ./dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

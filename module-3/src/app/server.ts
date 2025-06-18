@@ -1,0 +1,12 @@
+import app from "./app";
+
+let server;
+const port = 3080
+
+const bootstrap = async () =>{
+    app.listen(port, () => {
+        console.log(`Example app listening on ${port}`);
+    });
+}
+
+bootstrap()

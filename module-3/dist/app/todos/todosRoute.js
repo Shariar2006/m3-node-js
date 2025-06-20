@@ -16,8 +16,10 @@ exports.todosRoute = void 0;
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const mongoDB_1 = require("../../config/mongoDB");
+const mongodb_1 = require("mongodb");
 const filePath = path_1.default.join(__dirname, "../../../db/todo.json");
 exports.todosRoute = express_1.default.Router();
+// get all todos
 exports.todosRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const db = yield mongoDB_1.client.db('todosDB');
     const connection = db.collection("todos");
@@ -28,11 +30,12 @@ exports.todosRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, func
         todos
     });
 }));
+// create a todo
 exports.todosRoute.post('/create-todo', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, description, priority } = req.body;
     const db = yield mongoDB_1.client.db('todosDB');
-    const connection = db.collection("todos");
-    const todos = connection.insertOne({
+    const connection = yield db.collection("todos");
+    const todos = yield connection.insertOne({
         title,
         description,
         priority,
@@ -47,5 +50,28 @@ exports.todosRoute.post('/create-todo', (req, res) => __awaiter(void 0, void 0, 
             priority,
             completed: false
         }
+    });
+}));
+// get single todo
+exports.todosRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const db = yield mongoDB_1.client.db('todosDB');
+    const connection = yield db.collection("todos");
+    const todos = yield connection.findOne({ _id: new mongodb_1.ObjectId(id) });
+    res.json({
+        message: "get single todo",
+        todos
+    });
+}));
+// delete a todo
+exports.todosRoute.delete('/delete-todo/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const db = yield mongoDB_1.client.db('todosDB');
+    const connection = yield db.collection("todos");
+    const todos = yield connection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+    console.log(todos);
+    res.json({
+        message: 'successfully deleted a todo',
+        todos
     });
 }));

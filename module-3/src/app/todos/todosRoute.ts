@@ -4,8 +4,6 @@ import fs from 'fs'
 import { client } from '../../config/mongoDB'
 import { ObjectId } from 'mongodb'
 
-const filePath = path.join(__dirname, "../../../db/todo.json")
-
 export const todosRoute = express.Router()
 
 // get all todos
@@ -54,14 +52,45 @@ todosRoute.get('/:id', async (req: Request, res: Response) => {
   const db = await client.db('todosDB')
   const connection = await db.collection("todos")
 
-  const todos = await connection.findOne({_id: new ObjectId(id)})
+  const todos = await connection.findOne({ _id: new ObjectId(id) })
   res.json({
     message: "get single todo",
     todos
   })
 })
 
+// update a todo
+todosRoute.patch('/update-todo/:id', async (req: Request, res: Response) => {
+  const id = req.params.id
+  const { title, description, priority, completed } = req.body
 
+  const db = await client.db('todosDB')
+  const connection = await db.collection("todos")
+  const filterId = { _id: new ObjectId(id) }
+  const updateTodo = await connection.updateOne(filterId,
+    {
+      $set: {
+        title,
+        description,
+        priority,
+        completed
+      }
+    },
+    { upsert: true }
+  )
+
+  console.log(updateTodo)
+
+  res.json({
+    message: 'successfully update a todo',
+    data: {
+      title,
+      description,
+      priority,
+      completed
+    }
+  })
+})
 
 // delete a todo
 todosRoute.delete('/delete-todo/:id', async (req: Request, res: Response) => {
@@ -69,7 +98,7 @@ todosRoute.delete('/delete-todo/:id', async (req: Request, res: Response) => {
 
   const db = await client.db('todosDB')
   const connection = await db.collection("todos")
-  const todos = await connection.deleteOne({_id: new ObjectId(id)})
+  const todos = await connection.deleteOne({ _id: new ObjectId(id) })
 
   console.log(todos)
 

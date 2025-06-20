@@ -14,10 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.todosRoute = void 0;
 const express_1 = __importDefault(require("express"));
-const path_1 = __importDefault(require("path"));
 const mongoDB_1 = require("../../config/mongoDB");
 const mongodb_1 = require("mongodb");
-const filePath = path_1.default.join(__dirname, "../../../db/todo.json");
 exports.todosRoute = express_1.default.Router();
 // get all todos
 exports.todosRoute.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,6 +59,32 @@ exports.todosRoute.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, f
     res.json({
         message: "get single todo",
         todos
+    });
+}));
+// update a todo
+exports.todosRoute.patch('/update-todo/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    const { title, description, priority, completed } = req.body;
+    const db = yield mongoDB_1.client.db('todosDB');
+    const connection = yield db.collection("todos");
+    const filterId = { _id: new mongodb_1.ObjectId(id) };
+    const updateTodo = yield connection.updateOne(filterId, {
+        $set: {
+            title,
+            description,
+            priority,
+            completed
+        }
+    }, { upsert: true });
+    console.log(updateTodo);
+    res.json({
+        message: 'successfully update a todo',
+        data: {
+            title,
+            description,
+            priority,
+            completed
+        }
     });
 }));
 // delete a todo

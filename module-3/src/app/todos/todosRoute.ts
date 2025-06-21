@@ -1,6 +1,4 @@
 import express, { Application, Request, Response } from 'express'
-import path from 'path'
-import fs from 'fs'
 import { client } from '../../config/mongoDB'
 import { ObjectId } from 'mongodb'
 

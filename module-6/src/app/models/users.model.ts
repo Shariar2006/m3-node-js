@@ -1,6 +1,7 @@
 import { Model, Schema, model } from "mongoose"
 import { UserInstanceMethod, IUser, UserStaticMethod } from "../interface/user.interface"
 import bcrypt from 'bcryptjs'
+import { Note } from "./note.model"
 
 const userSchema = new Schema<IUser, UserStaticMethod, UserInstanceMethod> ({
     firstName: {
@@ -48,6 +49,13 @@ userSchema.pre("save", async function () {
 
 userSchema.post("save", function(doc){
 console.log(doc)
+})
+
+userSchema.post("findOneAndDelete", async function(doc, next) {
+    if(doc){
+        await Note.deleteMany({user: doc._id})
+    }
+    next()
 })
 
 export const User = model<IUser, UserStaticMethod>("User", userSchema)

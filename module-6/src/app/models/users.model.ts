@@ -1,8 +1,8 @@
 import { Model, Schema, model } from "mongoose"
-import { IHashPassword, IUser } from "../interface/user.interface"
+import { UserInstanceMethod, IUser, UserStaticMethod } from "../interface/user.interface"
 import bcrypt from 'bcryptjs'
 
-const userSchema = new Schema<IUser, Model<IUser>, IHashPassword> ({
+const userSchema = new Schema<IUser, UserStaticMethod, UserInstanceMethod> ({
     firstName: {
         type: String,
         required: true,
@@ -37,4 +37,9 @@ userSchema.method("hashPassword", async function(plainPassword){
     return password
 })
 
-export const User = model("User", userSchema)
+userSchema.static("hashPassword", async function(plainPassword){
+    const password = await bcrypt.hash(plainPassword, 10)
+    return password
+})
+
+export const User = model<IUser, UserStaticMethod>("User", userSchema)

@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose"
+import { INote } from "../interface/note.interface"
 
-const noteSchema = new Schema({
+const noteSchema = new Schema<INote>({
     title: {
         type: String,
         required: true,
@@ -24,6 +25,11 @@ const noteSchema = new Schema({
             type: String,
             default: 'gray'
         }
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
     }
 },
 {

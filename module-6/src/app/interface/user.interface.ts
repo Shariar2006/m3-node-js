@@ -5,3 +5,7 @@ export interface IUser {
     email: string,
     password: string
 }
+
+export interface IHashPassword {
+    hashPassword(password: string) : string
+}

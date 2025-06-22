@@ -42,4 +42,12 @@ userSchema.static("hashPassword", async function(plainPassword){
     return password
 })
 
+userSchema.pre("save", async function () {
+    this.password = await bcrypt.hash(this.password, 10)
+})
+
+userSchema.post("save", function(doc){
+console.log(doc)
+})
+
 export const User = model<IUser, UserStaticMethod>("User", userSchema)
